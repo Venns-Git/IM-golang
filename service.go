@@ -53,16 +53,9 @@ func NewServer(ip string, port int) *Server {
 
 // 业务接口
 func (this *Server) Handler(conn net.Conn) {
-	user := NewUser(conn)
 
-	// 用户上线
-	this.mapLock.Lock()
-	this.OnlineMap[user.Name] = user
-	this.mapLock.Unlock()
-
-	// 广播用户上线
-	this.BroadCast(user, "login")
-
+	user := NewUser(conn, this)
+	user.Online()
 	// 接受客户端发送的消息
 
 	go func() {
@@ -70,7 +63,7 @@ func (this *Server) Handler(conn net.Conn) {
 		for true {
 			n, err := conn.Read(buf)
 			if n == 0 {
-				this.BroadCast(user, "logout")
+				user.Offline()
 				return
 			}
 			if err != nil && err != io.EOF {
@@ -81,8 +74,8 @@ func (this *Server) Handler(conn net.Conn) {
 			// 提取用户消息
 			msg := string(buf[:n-1])
 
-			// 将得到的消息进行广播
-			this.BroadCast(user, msg)
+			// 用户针对msg进行消息处理
+			user.DoMessage(msg)
 		}
 	}()
 
