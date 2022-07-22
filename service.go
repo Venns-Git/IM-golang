@@ -137,3 +137,7 @@ func (this *Server) Start() {
 		go this.Handler(conn)
 	}
 }
+func main() {
+	server := NewServer("127.0.0.1", 8888)
+	server.Start()
+}
