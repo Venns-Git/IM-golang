@@ -55,7 +55,7 @@ func (this *User) Offline() {
 
 // 给当前客户端发生消息
 func (this *User) SendMsg(msg string) {
-	this.conn.Write([]byte(msg))
+	this.conn.Write([]byte(msg + "\n"))
 }
 
 // 用户处理消息的业务
