@@ -32,6 +32,9 @@ func NewClient(serverIp string, serverPort int) *Client {
 	// 返回对象
 	return client
 }
+func (client *Client) DealResponse() {
+
+}
 
 func (client *Client) menu() bool {
 	var flag int
@@ -48,6 +51,18 @@ func (client *Client) menu() bool {
 		fmt.Println(">>>>>请输入合法的数字<<<<<")
 		return false
 	}
+}
+
+func (client *Client) UpdateName() bool {
+	fmt.Println(">>>>>请输入用户名")
+	fmt.Scanln(&client.Name)
+	sendMsg := "rename|" + client.Name + "\n"
+	_, err := client.conn.Write([]byte(sendMsg))
+	if err != nil {
+		fmt.Println("conn.Write error:", err)
+		return false
+	}
+	return true
 }
 
 func (client *Client) Run() {
